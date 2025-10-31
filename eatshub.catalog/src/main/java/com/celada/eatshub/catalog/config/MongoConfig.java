@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRep
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@EnableReactiveMongoRepositories(basePackages = "com.celada.eatshub.catalog")
+@EnableReactiveMongoRepositories(basePackages = "com.celada.eatshub.catalog.repository")
 @PropertySource("classpath:mongo-connection.properties")
 public class MongoConfig extends AbstractReactiveMongoConfiguration {
 
