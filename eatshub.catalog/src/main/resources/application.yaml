@@ -1,3 +1,7 @@
 spring:
   application:
     name: eatshub.catalog
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
