@@ -1,4 +1,4 @@
-# Eatshub Catalog
+# Spring Webflux Eatshub
 
 ## Docker
 
