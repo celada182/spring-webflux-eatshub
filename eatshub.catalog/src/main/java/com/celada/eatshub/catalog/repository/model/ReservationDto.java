@@ -25,10 +25,11 @@ public class ReservationDto {
     @Id
     private UUID id;  // Using Binary for MongoDB UUID
     @Indexed
-    private Binary restaurantId;  // Using Binary for MongoDB UUID
+    private String restaurantId;
     private String customerId;
     private String customerName;
     private String customerEmail;
+    private String date;
     private String time;  // Storing as String in "HH:mm" format
     private Integer partySize;
     @Indexed

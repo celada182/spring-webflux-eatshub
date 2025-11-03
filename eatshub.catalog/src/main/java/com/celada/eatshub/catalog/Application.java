@@ -1,6 +1,8 @@
 package com.celada.eatshub.catalog;
 
-import com.celada.eatshub.catalog.repository.enums.PriceRange;
+import com.celada.eatshub.catalog.repository.ReservationRepository;
+import com.celada.eatshub.catalog.repository.model.ReservationDto;
+import com.celada.eatshub.catalog.service.definition.ReservationService;
 import com.celada.eatshub.catalog.service.definition.RestaurantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +10,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.List;
+import java.util.UUID;
 
 @SpringBootApplication
 @Slf4j
@@ -17,27 +19,100 @@ public class Application implements CommandLineRunner {
     @Autowired
     private RestaurantService restaurantService;
 
+    @Autowired
+    private ReservationService reservationService;
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("By cuisine type: French");
-        this.restaurantService.readByCuisineType("French")
-                .subscribe();
+        System.out.println("=== STARTING RESERVATION INSERT TESTS ===\n");
 
-        log.info("By price range: CHEAP, MEDIUM");
-        this.restaurantService.readByPriceRangeIn(List.of(PriceRange.CHEAP, PriceRange.MEDIUM))
-                .subscribe();
+        final var parrillaModernaID = "0ee619ba-e95f-4103-99f7-ee9cdf831d90";
+        final var cafeNostalgiaID = "be33011c-13dd-45b9-a60e-e9adb8f4e022";
 
-        log.info("By name starting with: A");
-        this.restaurantService.readByNameStartingWithIgnoreCase("A")
-                .subscribe();
 
-        log.info("By address city: Seattle");
-        this.restaurantService.readByAddressCity("Seattle")
-                .subscribe();
+        final var sarahReservation = createTestReservation(
+                parrillaModernaID,
+                "Sarah Johnson",
+                4,
+                "2025-06-15",
+                "19:30",
+                "Window table preferred"
+        );
+
+        final var michaelReservation = createTestReservation(
+                parrillaModernaID,
+                "Michael Davis",
+                2,
+                "2025-06-16",
+                "20:00",
+                "Anniversary dinner - romantic table"
+        );
+
+        final var emmaReservation = createTestReservation(
+                cafeNostalgiaID,
+                "Emma Wilson",
+                6,
+                "2025-06-17",
+                "18:00",
+                "Family birthday celebration"
+        );
+
+        final var sarahReservationCreated = reservationService.create(sarahReservation)
+                .block();
+
+        System.out.println("Sarah reservation: " + sarahReservationCreated.getId());
+
+        final var michaelReservationCreated = reservationService.create(michaelReservation)
+                .block();
+        System.out.println("Michael reservation: " + michaelReservationCreated.getId());
+
+        final var emmaReservationCreated = reservationService.create(emmaReservation)
+                .block();
+        System.out.println("Emma reservation: " + emmaReservationCreated.getId());
+
+        System.out.println("=== FINISHED RESERVATION INSERT TESTS ===");
+
+        System.out.println("=== INIT RESERVATION UPDATE TESTS ===");
+
+        final var michaelReservationToUpdate = reservationService.readById(michaelReservationCreated.getId()).block();
+
+        michaelReservationToUpdate.setDate("20:30");
+        michaelReservationToUpdate.setPartySize(3);
+
+        final var michaelReservationUpdated = this.reservationRepository.save(michaelReservationToUpdate).block();
+
+        System.out.println("michael reservation updated: " + michaelReservationUpdated.getDate());
+        System.out.println("michael reservation updated: " + michaelReservationUpdated.getPartySize());
+
+        System.out.println("=== FINISHED RESERVATION INSERT TESTS ===");
+
+
+        Thread.sleep(60000);
+        System.out.println("=== INIT RESERVATION DELETE TESTS ===");
+        this.reservationService.delete(michaelReservationCreated.getId()).block();
+        System.out.println("=== FINISHED RESERVATION DELETE TESTS ===");
+
 
     }
+
+    private ReservationDto createTestReservation(String restaurantId, String customerName,
+                                                 int partySize, String date, String time, String notes) {
+        return ReservationDto.builder()
+                .id(UUID.randomUUID())
+                .restaurantId(restaurantId)
+                .customerName(customerName)
+                .partySize(partySize)
+                .date(date)
+                .time(time)
+                .notes(notes)
+                .build();
+    }
+
 }

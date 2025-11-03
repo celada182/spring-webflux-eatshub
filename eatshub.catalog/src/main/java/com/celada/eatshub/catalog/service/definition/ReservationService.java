@@ -12,8 +12,8 @@ import java.util.UUID;
 
 public interface ReservationService {
     Mono<ReservationDto> create(ReservationDto reservationDto);
-    Flux<ReservationDto> readByRestaurantId(String restaurantId);
-    Flux<ReservationDto> readByRestaurantIdAndStatus(String restaurantId, ReservationStatus status);
+    Mono<ReservationDto> readById(UUID id);
+    Flux<ReservationDto> readByRestaurantIdAndStatus(UUID restaurantId, ReservationStatus status);
     Mono<ReservationDto> update(UUID id, ReservationDto reservationDto);
     Mono<Void> delete(UUID id);
 }
