@@ -1,9 +1,12 @@
 package com.celada.eatshub.catalog.service;
 
+import com.celada.eatshub.catalog.domain.ReservationRequest;
+import com.celada.eatshub.catalog.domain.ReservationResponse;
+import com.celada.eatshub.catalog.domain.enums.ReservationStatus;
 import com.celada.eatshub.catalog.exception.ResourceNotFoundException;
+import com.celada.eatshub.catalog.mapper.ReservationMapper;
 import com.celada.eatshub.catalog.repository.ReservationRepository;
 import com.celada.eatshub.catalog.repository.RestaurantRepository;
-import com.celada.eatshub.catalog.domain.enums.ReservationStatus;
 import com.celada.eatshub.catalog.repository.model.ReservationDto;
 import com.celada.eatshub.catalog.service.definition.ReservationService;
 import com.celada.eatshub.catalog.validator.ReservationValidator;
@@ -26,9 +29,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final RestaurantRepository restaurantRepository;
     private final ReservationValidator reservationValidator;
+    private final ReservationMapper reservationMapper;
 
     @Override
-    public Mono<ReservationDto> create(ReservationDto reservationDto) {
+    public Mono<String> create(ReservationRequest request) {
+
+        ReservationDto reservationDto = this.reservationMapper.toDto(request);
+
         final var validations = List.of(
                 this.reservationValidator.validateRestaurantNotClosed(),
                 this.reservationValidator.validateAvailability()
@@ -44,18 +51,20 @@ public class ReservationServiceImpl implements ReservationService {
                         reservationDto.setStatus(ReservationStatus.PENDING);
                     }
                     log.info("Creating reservation with id: {}", reservationDto.getId());
-                    return this.reservationRepository.save(reservationDto);
+                    return this.reservationRepository.save(reservationDto)
+                            .then(Mono.just(reservationDto.getId().toString()));
                 });
     }
 
     @Override
-    public Mono<ReservationDto> readById(UUID id) {
+    public Mono<ReservationResponse> readById(UUID id) {
         return this.reservationRepository.findById(id)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Reservation not found")));
+                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Reservation not found")))
+                .transform( this.reservationMapper::toResponseMono);
     }
 
     @Override
-    public Flux<ReservationDto> readByRestaurantIdAndStatus(UUID restaurantId, ReservationStatus status) {
+    public Flux<ReservationResponse> readByRestaurantIdAndStatus(UUID restaurantId, ReservationStatus status) {
         return this.restaurantRepository.findById(restaurantId)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("Restaurant not found")))
                 // Many to one
@@ -66,11 +75,13 @@ public class ReservationServiceImpl implements ReservationService {
                     }
                     log.info("Init search by restaurant id {} and status {}", restaurantId, status);
                     return this.reservationRepository.findByRestaurantIdAndStatus(restaurantId.toString(), status);
-                });
+                })
+                .transform(this.reservationMapper::toResponseFlux);
     }
 
     @Override
-    public Mono<ReservationDto> update(UUID id, ReservationDto reservationDto) {
+    public Mono<ReservationResponse> update(UUID id, ReservationRequest request) {
+        ReservationDto reservationDto = this.reservationMapper.toDto(request);
         ReservationDto update = ReservationDto.builder()
                 .id(id)
                 .status(reservationDto.getStatus())
@@ -90,7 +101,8 @@ public class ReservationServiceImpl implements ReservationService {
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("Reservation not found")))
                 .doOnNext(r -> log.info("Updating reservation with id: {}", r.getId()))
                 .flatMap(r -> this.reservationValidator.applyValidations(update, validations))
-                .flatMap(r -> this.reservationRepository.save(update));
+                .flatMap(r -> this.reservationRepository.save(update))
+                .transform(this.reservationMapper::toResponseMono);
     }
 
     @Override

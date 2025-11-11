@@ -14,37 +14,37 @@ import java.util.Objects;
 
 @Mapper(componentModel = "spring")
 public interface ReservationMapper {
+    @Mapping(target = "date", expression = "java(extractDate(source.getDateTime()))")
+    @Mapping(target = "time", expression = "java(extractTime(source.getDateTime()))")
+    @Mapping(target = "notes", source = "comment", defaultValue = "")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
     ReservationDto toDto(ReservationRequest source);
 
     @Mapping(target = "dateTime", expression = "java(source.getDate() + \",\" + source.getTime())")
     ReservationResponse toResponse(ReservationDto source);
 
-    @Mapping(target = "notes", source = "comment", defaultValue = "")
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "date", ignore = true)
-    @Mapping(target = "time", ignore = true)
-    default Flux<ReservationResponse> toResponse(Flux<ReservationDto> source) {
+    default Flux<ReservationResponse> toResponseFlux(Flux<ReservationDto> source) {
         return source.map(this::toResponse);
     }
 
-    default Mono<ReservationResponse> toResponse(Mono<ReservationDto> source) {
+    default Mono<ReservationResponse> toResponseMono(Mono<ReservationDto> source) {
         return source.map(this::toResponse);
     }
 
-    default Mono<ReservationDto> toDto(Mono<ReservationRequest> source) {
+    default Mono<ReservationDto> toDtoMono(Mono<ReservationRequest> source) {
         return source.map(this::toDto);
     }
 
-    default Flux<ReservationDto> toDto(Flux<ReservationRequest> source) {
+    default Flux<ReservationDto> toDtoFlux(Flux<ReservationRequest> source) {
         return source.map(this::toDto);
     }
 
-    @AfterMapping
-    default void splitDateTime(ReservationRequest request, @MappingTarget ReservationDto dto) {
-        if (Objects.nonNull(request) && Objects.nonNull(request.getDateTime()) && request.getDateTime().contains(",")) {
-            var split = request.getDateTime().split(",");
-            dto.setDate(split[0]);
-            dto.setTime(split[1]);
-        }
+    default String extractDate(String dateTime) {
+        return dateTime.split(",")[0];
+    }
+
+    default String extractTime(String dateTime) {
+        return dateTime.split(",")[1];
     }
 }

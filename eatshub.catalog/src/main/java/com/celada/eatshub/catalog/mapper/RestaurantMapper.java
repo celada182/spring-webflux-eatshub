@@ -19,11 +19,11 @@ public interface RestaurantMapper {
     @Mapping(target = "globalRating", expression = "java(calculateGlobalRating(source.getReviews()))")
     RestaurantResponse toResponse(RestaurantDto source);
 
-    default Flux<RestaurantResponse> toResponse(Flux<RestaurantDto> source) {
+    default Flux<RestaurantResponse> toResponseFlux(Flux<RestaurantDto> source) {
         return source.map(this::toResponse);
     }
 
-    default Mono<RestaurantResponse> toResponse(Mono<RestaurantDto> source) {
+    default Mono<RestaurantResponse> toResponseMono(Mono<RestaurantDto> source) {
         return source.map(this::toResponse);
     }
 
