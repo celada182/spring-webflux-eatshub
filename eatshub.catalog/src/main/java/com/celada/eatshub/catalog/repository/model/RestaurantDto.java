@@ -36,6 +36,8 @@ public class RestaurantDto {
     private PriceRange priceRange;
     private String openHours;
     private String logoUrl;
+    private String closeAt;
+    private String maxCapacity;
     private ContactInfo contactInfo;
     private List<ReviewDto> reviews;
 }

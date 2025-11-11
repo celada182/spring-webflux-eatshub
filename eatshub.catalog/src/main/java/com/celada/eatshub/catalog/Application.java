@@ -36,7 +36,6 @@ public class Application implements CommandLineRunner {
         final var parrillaModernaID = "0ee619ba-e95f-4103-99f7-ee9cdf831d90";
         final var cafeNostalgiaID = "be33011c-13dd-45b9-a60e-e9adb8f4e022";
 
-
         final var sarahReservation = createTestReservation(
                 parrillaModernaID,
                 "Sarah Johnson",
@@ -94,11 +93,37 @@ public class Application implements CommandLineRunner {
         System.out.println("=== FINISHED RESERVATION INSERT TESTS ===");
 
 
-        Thread.sleep(60000);
-        System.out.println("=== INIT RESERVATION DELETE TESTS ===");
-        this.reservationService.delete(michaelReservationCreated.getId()).block();
-        System.out.println("=== FINISHED RESERVATION DELETE TESTS ===");
+//        Thread.sleep(60000);
+//        System.out.println("=== INIT RESERVATION DELETE TESTS ===");
+//        this.reservationService.delete(michaelReservationCreated.getId()).block();
+//        System.out.println("=== FINISHED RESERVATION DELETE TESTS ===");
 
+        System.out.println("=== VALIDATION TESTS ===");
+        final var michaelReservation2 = createTestReservation(
+                parrillaModernaID,
+                "Michael Davis",
+                2,
+                "2025-06-16",
+                "23:00",
+                "Anniversary dinner - romantic table"
+        );
+
+        reservationService.create(michaelReservation2)
+                .subscribe();
+
+        Thread.sleep(10000);
+        final var unavailableID = "dfcbe98d-392b-4b93-9a49-27005223d15d";
+        final var unavailableReservation = createTestReservation(
+                unavailableID,
+                "Michael Davis",
+                2,
+                "2025-06-16",
+                "19:00",
+                "Anniversary dinner - romantic table"
+        );
+
+        reservationService.create(unavailableReservation)
+                .subscribe();
 
     }
 

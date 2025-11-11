@@ -6,12 +6,14 @@ import com.celada.eatshub.catalog.repository.RestaurantRepository;
 import com.celada.eatshub.catalog.repository.enums.ReservationStatus;
 import com.celada.eatshub.catalog.repository.model.ReservationDto;
 import com.celada.eatshub.catalog.service.definition.ReservationService;
+import com.celada.eatshub.catalog.validator.ReservationValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -23,13 +25,21 @@ public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RestaurantRepository restaurantRepository;
+    private final ReservationValidator reservationValidator;
 
     @Override
     public Mono<ReservationDto> create(ReservationDto reservationDto) {
-        return this.restaurantRepository.findById(UUID.fromString(reservationDto.getRestaurantId()))
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Restaurant not found")))
-                // Multiple mono flat to one
-                .flatMap(r -> {
+        final var validations = List.of(
+                this.reservationValidator.validateRestaurantNotClosed(),
+                this.reservationValidator.validateAvailability()
+        );
+
+        return this.reservationValidator.applyValidations(reservationDto, validations)
+                // Wait for validations to execute
+                .then(
+                        this.restaurantRepository.findById(UUID.fromString(reservationDto.getRestaurantId()))
+                                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Restaurant not found")))
+                ).flatMap(r -> {
                     if (Objects.isNull(reservationDto.getStatus())) {
                         reservationDto.setStatus(ReservationStatus.PENDING);
                     }
@@ -70,9 +80,16 @@ public class ReservationServiceImpl implements ReservationService {
                 .time(reservationDto.getTime())
                 .partySize(reservationDto.getPartySize())
                 .build();
+
+        final var validations = List.of(
+                this.reservationValidator.validateRestaurantNotClosed(),
+                this.reservationValidator.validateAvailability()
+        );
+
         return this.reservationRepository.findById(id)
                 .switchIfEmpty(Mono.error(new ResourceNotFoundException("Reservation not found")))
                 .doOnNext(r -> log.info("Updating reservation with id: {}", r.getId()))
+                .flatMap(r -> this.reservationValidator.applyValidations(update, validations))
                 .flatMap(r -> this.reservationRepository.save(update));
     }
 
