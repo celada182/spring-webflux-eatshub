@@ -1,11 +1,10 @@
 package com.celada.eatshub.catalog.repository.model;
 
-import com.celada.eatshub.catalog.repository.enums.ReservationStatus;
+import com.celada.eatshub.catalog.domain.enums.ReservationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.Binary;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;

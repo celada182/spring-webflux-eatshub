@@ -1,7 +1,7 @@
 package com.celada.eatshub.catalog.service;
 
 import com.celada.eatshub.catalog.repository.RestaurantRepository;
-import com.celada.eatshub.catalog.repository.enums.PriceRange;
+import com.celada.eatshub.catalog.domain.enums.PriceRange;
 import com.celada.eatshub.catalog.repository.model.RestaurantDto;
 import com.celada.eatshub.catalog.service.definition.RestaurantService;
 import lombok.RequiredArgsConstructor;

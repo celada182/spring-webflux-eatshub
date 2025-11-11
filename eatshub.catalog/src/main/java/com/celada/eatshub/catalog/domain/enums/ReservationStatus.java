@@ -1,4 +1,4 @@
-package com.celada.eatshub.catalog.repository.enums;
+package com.celada.eatshub.catalog.domain.enums;
 
 public enum ReservationStatus {
     PENDING,

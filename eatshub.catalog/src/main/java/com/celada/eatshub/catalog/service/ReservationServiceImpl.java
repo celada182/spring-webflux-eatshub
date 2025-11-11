@@ -3,7 +3,7 @@ package com.celada.eatshub.catalog.service;
 import com.celada.eatshub.catalog.exception.ResourceNotFoundException;
 import com.celada.eatshub.catalog.repository.ReservationRepository;
 import com.celada.eatshub.catalog.repository.RestaurantRepository;
-import com.celada.eatshub.catalog.repository.enums.ReservationStatus;
+import com.celada.eatshub.catalog.domain.enums.ReservationStatus;
 import com.celada.eatshub.catalog.repository.model.ReservationDto;
 import com.celada.eatshub.catalog.service.definition.ReservationService;
 import com.celada.eatshub.catalog.validator.ReservationValidator;

@@ -1,6 +1,6 @@
 package com.celada.eatshub.catalog.repository;
 
-import com.celada.eatshub.catalog.repository.enums.PriceRange;
+import com.celada.eatshub.catalog.domain.enums.PriceRange;
 import com.celada.eatshub.catalog.repository.model.RestaurantDto;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import reactor.core.publisher.Flux;

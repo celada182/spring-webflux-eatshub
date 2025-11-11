@@ -1,4 +1,4 @@
-package com.celada.eatshub.catalog.repository.records;
+package com.celada.eatshub.catalog.domain.records;
 
 import lombok.Builder;
 
