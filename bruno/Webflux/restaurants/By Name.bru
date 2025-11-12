@@ -1,0 +1,20 @@
+meta {
+  name: By Name
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/catalog/restaurants/:name
+  body: none
+  auth: inherit
+}
+
+params:path {
+  name: the
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

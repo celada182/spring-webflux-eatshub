@@ -1,0 +1,20 @@
+meta {
+  name: By Cousin Type
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/catalog/restaurants?cousinType=Vegan
+  body: none
+  auth: inherit
+}
+
+params:query {
+  cousinType: Vegan
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

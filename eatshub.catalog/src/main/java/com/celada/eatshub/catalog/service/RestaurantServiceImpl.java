@@ -22,6 +22,18 @@ public class RestaurantServiceImpl implements RestaurantService {
     private final RestaurantMapper restaurantMapper;
 
     @Override
+    public Flux<RestaurantResponse> readAll() {
+        return this.restaurantRepository.findAll()
+                .doOnSubscribe(s -> log.info("Init search all restaurants"))
+                .doOnNext(r -> log.info("Found restaurant: {}", r.getName()))
+                .onErrorResume(e -> {
+                    log.error("Error searching all restaurants", e);
+                    return Flux.empty();
+                })
+                .transform(this.restaurantMapper::toResponseFlux);
+    }
+
+    @Override
     public Flux<RestaurantResponse> readByCuisineType(String cuisineType) {
         return this.restaurantRepository.findByCuisineType(cuisineType)
                 .doOnSubscribe(s -> log.info("Init search by cuisine type: {}", cuisineType))

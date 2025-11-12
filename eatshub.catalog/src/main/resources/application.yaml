@@ -1,6 +1,8 @@
 spring:
   application:
     name: eatshub.catalog
+  webflux:
+    base-path: /catalog
 
 logging:
   level:

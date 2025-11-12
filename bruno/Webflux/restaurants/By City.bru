@@ -1,0 +1,20 @@
+meta {
+  name: By City
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/catalog/restaurants?city=Portland
+  body: none
+  auth: inherit
+}
+
+params:query {
+  city: Portland
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
