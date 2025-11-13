@@ -14,7 +14,7 @@ public class RestaurantCatalogRouter {
     private final static String BY_NAME_URL = "/{name}";
 
     @Bean
-    public RouterFunction<ServerResponse> routes(RestaurantCatalogHandler restaurantCatalogHandler) {
+    public RouterFunction<ServerResponse> restaurantRoutes(RestaurantCatalogHandler restaurantCatalogHandler) {
         return route()
                 .path("/restaurants", builder -> builder
                         .GET(BY_NAME_URL, restaurantCatalogHandler::getRestaurantByName)

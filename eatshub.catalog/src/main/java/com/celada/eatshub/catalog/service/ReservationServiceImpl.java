@@ -35,6 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     public Mono<String> create(ReservationRequest request) {
 
         ReservationDto reservationDto = this.reservationMapper.toDto(request);
+        reservationDto.setId(UUID.randomUUID());
 
         final var validations = List.of(
                 this.reservationValidator.validateRestaurantNotClosed(),
@@ -108,7 +109,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public Mono<Void> delete(UUID id) {
         return this.reservationRepository.deleteById(id)
-                .switchIfEmpty(Mono.error(new ResourceNotFoundException("Reservation not found")))
                 .doOnNext(r -> log.info("Deleting reservation with id: {}", id));
     }
 }

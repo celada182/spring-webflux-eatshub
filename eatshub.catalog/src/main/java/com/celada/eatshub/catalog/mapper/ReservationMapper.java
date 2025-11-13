@@ -3,6 +3,7 @@ package com.celada.eatshub.catalog.mapper;
 import com.celada.eatshub.catalog.domain.ReservationRequest;
 import com.celada.eatshub.catalog.domain.ReservationResponse;
 import com.celada.eatshub.catalog.repository.model.ReservationDto;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -39,6 +40,7 @@ public interface ReservationMapper {
         return source.map(this::toDto);
     }
 
+    @AfterMapping
     default void splitDateTime(ReservationRequest source, @MappingTarget ReservationDto target) {
         if (Objects.nonNull(source.getDateTime()) && source.getDateTime().contains(",")) {
             String[] dateTime = source.getDateTime().split(",");
