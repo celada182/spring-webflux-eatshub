@@ -1,0 +1,20 @@
+meta {
+  name: Delete
+  type: http
+  seq: 4
+}
+
+delete {
+  url: http://localhost:8080/catalog/reservation/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: f9210b47-c487-4d33-bf2d-974302966218
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

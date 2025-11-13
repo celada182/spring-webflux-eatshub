@@ -1,0 +1,20 @@
+meta {
+  name: By Id
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:8080/catalog/reservation/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: f2f15e09-af27-4636-9855-6b5e1b7a9fa3
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

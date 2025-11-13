@@ -1,0 +1,28 @@
+meta {
+  name: Create
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://localhost:8080/catalog/reservation
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "restaurantId": "41c599c0-4b1d-476b-92a6-5cd1804333b3",
+    "customerId": "b321043e-adfc-48b5-b9f7-e9769701e886",
+    "customerName": "Shane McSteam",
+    "customerEmail": "shane.21@email.com",
+    "dateTime": "2025-06-16,19:30",
+    "partySize": 4,
+    "comment": "Mesa cerca de la ventana por favor"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Update
+  type: http
+  seq: 3
+}
+
+put {
+  url: http://localhost:8080/catalog/reservation/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: f2f15e09-af27-4636-9855-6b5e1b7a9fa3
+}
+
+body:json {
+  {
+    "customerName": "Shane McSteam Edit",
+    "comment": "Mesa cerca de la ventana por favor edit"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
